@@ -19,9 +19,15 @@ end
 
 get '/transactions' do
   content_type :json
-
+  col = params["col"]
+  sort_order = params.fetch("sort_order", "asc") == "asc" ? 1 : -1
+  unsorted_transactions = transactions
+  sorted_transactions = unsorted_transactions.sort { |a, b|
+    puts "#{a["id"]} #{b["id"]} #{sort_order}"
+    (a["id"] <=> b["id"]) * sort_order
+  }
   {
-    records: transactions,
+    records: sorted_transactions,
     count: transactions.size
   }.to_json
 end
